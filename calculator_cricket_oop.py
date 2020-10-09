@@ -1,4 +1,12 @@
+# Importing libraries
+
 import random
+import pandas as pd
+
+# Importing lists of names for randomisation
+
+male_names = pd.read_csv('reduced_men_names.csv')
+female_names = pd.read_csv('reduced_women_names.csv')
 
 # Defining the Player class
 
@@ -76,7 +84,60 @@ def intro(first_team, second_team):
     winning_side(bat_first, bowl_first)
     input('Press enter to quit')
     
+# Function for allowing the player to choose players for their team
+def team_chooser():
+    while True:
+        answer = input('Would you like to choose a (p)remade team, a (r)andomised team, or (y)our own team?\n> ').lower()
+        if answer == 'p':
+            print(premade())
+        elif answer == 'r':
+            randomised()
+        elif answer == 'y':
+            player_made()
+        else:
+            print('Please enter either "p", "r", or "y".\n')
+
+# Selects from one of the premade teams
+def premade():
+    while True:
+        print('You can choose from the (W)isden XI or the (A)lternate XI:')
+        print('Wisden XI\t\t\tAlternate XI')
+        for i in range(len(first_team)):
+            print(str(first_team[i]) + '\t\t\t' + str(second_team[i]))
+        response = input('\n> ').lower()
+        if response == 'w':
+            print('You have selected the Wisden XI')
+            return team_1
+        elif response == 'a':
+            print('You have selected the Alternate XI')
+            return team_2
+        else:
+            print('Please select either the Wisden XI or the Alternate XI')
     
+# Chooses gender of players
+def randomised():
+    while True:
+        response = input('Would you like a (m)ale team, a (f)emale team, or mi(x)ed?\n> ')
+        responses = ['m', 'f', 'x']
+        if response in responses:
+            return randomise_players(response)
+
+# Chooses randomly from lists of names
+def randomise_players(gender):   
+    if gender == 'm':
+        name_list = male_names['name'].values
+    elif gender == 'f':
+        name_list = female_names['name'].values
+    else:
+        name_list = list(male_names['name'].values) + list(female_names['name'].values)
+    players = random.choices(name_list, k=11)
+    print(players)
+        
+        
+
+def player_made():
+    pass
+
 # Choosing which team wins the coin toss. The player can choose whether to bat or bowl
 # while the computer always bats
 def coin_toss(first_team, second_team):
@@ -318,4 +379,7 @@ def winning_side(first_team, second_team):
     for i in range(0, 3):
         print(str(second_team.top_scorers[i][0]), str(second_team.top_scorers[i][1]) + '\t\t' + str(bowlers.format(name = first_team.top_bowlers[i][0], wickets = first_team.top_bowlers[i][1], runs = (first_team.top_bowlers[i][0]).bowler_score)))
 
-intro(team_1, team_2)
+
+team_chooser()
+
+#intro(team_1, team_2)
