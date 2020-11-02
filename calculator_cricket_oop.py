@@ -3,72 +3,25 @@
 import random
 import pandas as pd
 
-# Importing lists of names for randomisation
+from classes import Bowler, Player, Team
+from cricket_helpers import team_generator
+# Importing lists of names for randomised teams.
 
-male_names = pd.read_csv('reduced_men_names.csv')
-female_names = pd.read_csv('reduced_women_names.csv')
+male_names = pd.read_csv('reduced_male_names.csv')
+female_names = pd.read_csv('reduced_female_names.csv')
 
-# Defining the Player class
-
-class Player():
-    def __init__(self, name):
-        self.name = name
-        self.score = 0
-        self.out = False
-    
-    def __repr__(self):
-        return self.name
-
-# Defining the Bowler class
-
-class Bowler(Player):
-    def __init__(self, name):
-        super().__init__(name)
-        self.bowling_style = None
-        self.bowler_score = 0
-        self.bowler_wickets = 0
-
-# Defining the Team class
-
-class Team():
-    def __init__(self, players, team_name):
-        self.players = list(players)
-        self.team_name = team_name
-        self.score = 0
-        self.outs = 0
-        self.bowlers = players[7:]
-        self.second_innings = False
-    
-    def __repr__(self):
-        return self.team_name
-
-# Currently the teams are pre-defined, but I hope to add the ability to choose teams
+# Pre-defining two possible teams for testing
 
 first_team = ['Jack Hobbs', 'WG Grace', 'Donald Bradman', 'Sachin Tendulkar', 'Viv Richards', 'Garry Sobers', 'Alan Knott', 'Wasim Akram', 'Shane Warne', 'Malcolm Marshall', 'Sydney Barnes']
 second_team = ['Herbert Sutcliffe', 'Sunil Gavaskar', 'Ricky Ponting', 'Brian Lara', 'Jacques Kallis', 'Graeme Pollock', 'Adam Gilchrist', 'Imran Khan', 'Dennis Lillee', 'Muttiah Muralitharan', 'Jim Laker']
 
-# Setting the first 7 players as batsman and the last 4 as bowlers
+# Defining the two teams using the team_generator helper function
 
-for i in range(7):
-    first_team[i] = Player(first_team[i])
+team_1 = team_generator(first_team, 'Wisden XI')
+team_2 = team_generator(second_team, 'Alternate XI')
 
-for i in range(7, 11, 1):
-    first_team[i] = Bowler(first_team[i])
-
-for i in range(7):
-    second_team[i] = Player(second_team[i])
-    
-for i in range(7, 11, 1):
-    second_team[i] = Bowler(second_team[i])
-
-#defining the two teams
-
-team_1 = Team(first_team, 'Wisden XI')
-team_2 = Team(second_team, 'Alternate XI')
-
-# Defining the function that holds the game
-    
-def intro(first_team, second_team):
+# Defining the function which holds the functions making up the rest of the game
+def app_handler(first_team, second_team):
     input('Welcome to Mike\'s Calculator Cricket game! Press enter to start.\n')
     print('Today\'s match is between ' + str(first_team) + ' and ' \
           + str(second_team) + '. It looks like both sides are ready to begin and the captains are ready for the coin toss.')
@@ -83,60 +36,7 @@ def intro(first_team, second_team):
     innings(bowl_first, bat_first)
     winning_side(bat_first, bowl_first)
     input('Press enter to quit')
-    
-# Function for allowing the player to choose players for their team
-def team_chooser():
-    while True:
-        answer = input('Would you like to choose a (p)remade team, a (r)andomised team, or (y)our own team?\n> ').lower()
-        if answer == 'p':
-            print(premade())
-        elif answer == 'r':
-            randomised()
-        elif answer == 'y':
-            player_made()
-        else:
-            print('Please enter either "p", "r", or "y".\n')
 
-# Selects from one of the premade teams
-def premade():
-    while True:
-        print('You can choose from the (W)isden XI or the (A)lternate XI:')
-        print('Wisden XI\t\t\tAlternate XI')
-        for i in range(len(first_team)):
-            print(str(first_team[i]) + '\t\t\t' + str(second_team[i]))
-        response = input('\n> ').lower()
-        if response == 'w':
-            print('You have selected the Wisden XI')
-            return team_1
-        elif response == 'a':
-            print('You have selected the Alternate XI')
-            return team_2
-        else:
-            print('Please select either the Wisden XI or the Alternate XI')
-    
-# Chooses gender of players
-def randomised():
-    while True:
-        response = input('Would you like a (m)ale team, a (f)emale team, or mi(x)ed?\n> ')
-        responses = ['m', 'f', 'x']
-        if response in responses:
-            return randomise_players(response)
-
-# Chooses randomly from lists of names
-def randomise_players(gender):   
-    if gender == 'm':
-        name_list = male_names['name'].values
-    elif gender == 'f':
-        name_list = female_names['name'].values
-    else:
-        name_list = list(male_names['name'].values) + list(female_names['name'].values)
-    players = random.choices(name_list, k=11)
-    print(players)
-        
-        
-
-def player_made():
-    pass
 
 # Choosing which team wins the coin toss. The player can choose whether to bat or bowl
 # while the computer always bats
@@ -380,6 +280,4 @@ def winning_side(first_team, second_team):
         print(str(second_team.top_scorers[i][0]), str(second_team.top_scorers[i][1]) + '\t\t' + str(bowlers.format(name = first_team.top_bowlers[i][0], wickets = first_team.top_bowlers[i][1], runs = (first_team.top_bowlers[i][0]).bowler_score)))
 
 
-team_chooser()
-
-#intro(team_1, team_2)
+#app_handler(team_1, team_2)
