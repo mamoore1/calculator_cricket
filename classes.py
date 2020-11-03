@@ -35,4 +35,4 @@ class Team():
         self.second_innings = False
 
     def __repr__(self):
-        return self.team_name
+        return self.name
